@@ -11,7 +11,7 @@ const benefits = [
 
 export default function Schools() {
   return (
-    <div className="pt-16">
+    <div className="pt-nav">
       <section className="py-24 px-6 relative overflow-hidden" style={{ backgroundColor: "#000000" }}>
         <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px)", backgroundSize: "64px 64px" }} />
         <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,215,0,0.15), transparent)", transform: "translate(30%, -30%)" }} />

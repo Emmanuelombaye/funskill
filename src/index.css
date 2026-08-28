@@ -16,8 +16,18 @@
   box-sizing: border-box;
 }
 
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --nav-bar: 4rem;
+  --nav-height: calc(var(--nav-bar) + var(--safe-top));
+}
+
 html {
   scroll-behavior: smooth;
+}
+
+.pt-nav {
+  padding-top: var(--nav-height);
 }
 
 body {

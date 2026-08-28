@@ -44,7 +44,7 @@ export default function Programs() {
   const [activeSkill, setActiveSkill] = useState<"chess" | "skating" | "both">("both");
 
   return (
-    <div className="pt-16">
+    <div className="pt-nav">
       {/* Header */}
       <section className="py-20 px-6 relative overflow-hidden" style={{ backgroundColor: "#000000" }}>
         <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px)", backgroundSize: "64px 64px" }} />

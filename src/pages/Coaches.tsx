@@ -57,7 +57,7 @@ const coaches = [
 
 export default function Coaches() {
   return (
-    <div className="pt-16">
+    <div className="pt-nav">
       <section className="py-24 px-6" style={{ backgroundColor: "#000000" }}>
         <div className="max-w-7xl mx-auto text-center">
           <p className="text-xs uppercase tracking-widest font-semibold mb-4" style={{ color: "#FFD700" }}>Our Team</p>

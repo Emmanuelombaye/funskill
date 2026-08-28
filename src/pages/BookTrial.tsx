@@ -80,7 +80,7 @@ export default function BookTrial() {
 
   if (submitted) {
     return (
-      <div className="pt-16 min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#000000" }}>
+      <div className="pt-nav min-h-screen flex items-center justify-center px-6" style={{ backgroundColor: "#000000" }}>
         <div className="text-center max-w-md">
           <div className="text-8xl mb-6 animate-float">🎉</div>
           <h1 className="font-display font-black text-5xl mb-4" style={{ color: "#ffffff" }}>You're Booked!</h1>
@@ -104,7 +104,7 @@ export default function BookTrial() {
   }
 
   return (
-    <div className="pt-16" style={{ backgroundColor: "#000000", minHeight: "100vh" }}>
+    <div className="pt-nav" style={{ backgroundColor: "#000000", minHeight: "100vh" }}>
       {/* Header */}
       <div className="relative overflow-hidden py-16 px-6" style={{ backgroundColor: "#000000" }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(255,215,0,0.08) 0%, transparent 70%)" }} />

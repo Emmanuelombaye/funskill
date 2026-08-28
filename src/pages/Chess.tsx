@@ -9,7 +9,7 @@ const features = [
 
 export default function Chess() {
   return (
-    <div className="pt-16">
+    <div className="pt-nav">
       <section className="relative min-h-[60vh] flex items-end overflow-hidden" style={{ backgroundColor: "#000000" }}>
         <img src="https://images.unsplash.com/photo-1528819622765-d6bcf132f793?w=1600&h=800&fit=crop&auto=format" alt="Chess" className="absolute inset-0 w-full h-full object-cover opacity-30" />
         <div className="absolute inset-0" style={{ background: "linear-gradient(to top, #000000 30%, transparent 100%)" }} />

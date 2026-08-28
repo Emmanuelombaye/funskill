@@ -75,7 +75,7 @@ export default function Taekwondo() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="pt-16 overflow-x-hidden">
+    <div className="pt-nav overflow-x-hidden">
 
       {/* HERO */}
       <section className="relative min-h-screen flex items-center" style={{ backgroundColor: "#000000" }}>

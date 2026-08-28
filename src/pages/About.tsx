@@ -18,7 +18,7 @@ const values = [
 
 export default function About() {
   return (
-    <div className="pt-16">
+    <div className="pt-nav">
       <section className="py-24 px-6 relative overflow-hidden" style={{ backgroundColor: "#000000" }}>
         <div className="absolute inset-0" style={{ background: "radial-gradient(ellipse at 70% 50%, rgba(255,215,0,0.08) 0%, transparent 70%)" }} />
         <div className="relative max-w-7xl mx-auto grid lg:grid-cols-2 gap-16 items-center">

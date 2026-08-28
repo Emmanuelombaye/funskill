@@ -92,7 +92,7 @@ export default function Home() {
   return (
     <div>
       {/* HERO */}
-      <section className="relative min-h-screen flex items-center pt-16 overflow-hidden" style={{ backgroundColor: "#000000" }}>
+      <section className="relative min-h-screen flex items-center pt-nav overflow-hidden" style={{ backgroundColor: "#000000" }}>
         {/* bg shapes */}
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full opacity-20" style={{ background: "radial-gradient(circle, #FFD700 0%, transparent 70%)", transform: "translate(30%, -30%)" }} />
@@ -206,16 +206,16 @@ export default function Home() {
             <Link to="/skating" className="group relative rounded-3xl overflow-hidden block" style={{ minHeight: "420px" }}>
               <img src="https://images.unsplash.com/photo-1775482767815-3fb3a0fca405?w=800&h=600&fit=crop&auto=format" alt="Roller Skating" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
-              <div className="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-bold uppercase" style={{ backgroundColor: "#FFE84D", color: "#000000" }}>⛸ Skating</div>
+              <div className="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-bold uppercase" style={{ backgroundColor: "#FFD700", color: "#000000" }}>⛸ Skating</div>
               <div className="absolute inset-0 p-8 flex flex-col justify-end">
-                <p className="font-display font-bold text-base tracking-widest mb-2" style={{ color: "#FFE84D" }}>BALANCE. MOVE. FLY.</p>
+                <p className="font-display font-bold text-base tracking-widest mb-2" style={{ color: "#FFD700" }}>BALANCE. MOVE. FLY.</p>
                 <h3 className="font-display font-black text-4xl mb-4" style={{ color: "#ffffff" }}>Roller Skating</h3>
                 <ul className="flex flex-wrap gap-2 mb-5">
                   {["Balance & Coordination", "Fitness", "Confidence", "Ages 4+"].map((t) => (
-                    <li key={t} className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(255,232,77,0.15)", color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,232,77,0.2)" }}>{t}</li>
+                    <li key={t} className="text-xs px-3 py-1 rounded-full" style={{ backgroundColor: "rgba(255,215,0,0.15)", color: "rgba(255,255,255,0.8)", border: "1px solid rgba(255,215,0,0.2)" }}>{t}</li>
                   ))}
                 </ul>
-                <span className="inline-flex items-center gap-2 font-semibold text-sm group-hover:gap-4 transition-all" style={{ color: "#FFE84D" }}>Explore Skating →</span>
+                <span className="inline-flex items-center gap-2 font-semibold text-sm group-hover:gap-4 transition-all" style={{ color: "#FFD700" }}>Explore Skating →</span>
               </div>
             </Link>
 

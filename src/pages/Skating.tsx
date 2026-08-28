@@ -105,7 +105,7 @@ export default function Skating() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
-    <div className="pt-16 overflow-x-hidden">
+    <div className="pt-nav overflow-x-hidden">
 
       {/* ══════════════════════════════════════════
           HERO — full-bleed with mosaic images

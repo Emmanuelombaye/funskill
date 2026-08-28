@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 const programs = [
   { label: "Chess", to: "/chess" },
   { label: "Roller Skating", to: "/skating" },
+  { label: "Ballet", to: "/ballet" },
+  { label: "Taekwondo", to: "/taekwondo" },
   { label: "All Programs", to: "/programs" },
   { label: "Schools", to: "/schools" },
 ];
@@ -16,7 +18,7 @@ const company = [
 
 export default function Footer() {
   return (
-    <footer style={{ backgroundColor: "#000000", borderTop: "1px solid rgba(255,215,0,0.15)" }}>
+    <footer style={{ backgroundColor: "#000000", borderTop: "1px solid rgba(255,215,0,0.15)", paddingBottom: "env(safe-area-inset-bottom, 0px)" }}>
       <div className="max-w-7xl mx-auto px-6 pt-16 pb-8">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
           {/* Brand */}
