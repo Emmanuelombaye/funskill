@@ -1,0 +1,11 @@
+{
+  "title": "FunSkill Academy",
+  "description": "FunSkill Academy — chess, skating, ballet, taekwondo, and school programs for kids in Kenya.",
+  "robots": {
+    "index": true
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}

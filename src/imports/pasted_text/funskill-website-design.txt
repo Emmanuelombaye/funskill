@@ -1,0 +1,234 @@
+Create a modern, premium, energetic website for a sports and skills academy called **FunSkill**.
+
+### Brand
+
+**Name:** FunSkill
+**Tagline:** **Learn. Play. Master.**
+**Business:** A multi-skill academy that teaches children and young people **Chess and Roller Skating**, with the possibility to expand into other sports and skills later.
+
+FunSkill should feel like a professional international academy — fun, trustworthy, youthful, competitive, and family-friendly. Do NOT copy the visual design, text, logo, or layout of any existing company. Create an original identity inspired by the idea of a premium multi-sport academy.
+
+### Target audience
+
+* Parents looking for quality activities for their children
+* Children and teenagers
+* Schools looking for extracurricular/co-curricular programs
+* Organizations looking for sports and skills training
+
+### Main navigation
+
+Home | Programs | Chess | Skating | Schools | About Us | Coaches | Locations | Contact
+
+Add a prominent **Book a Trial** button in the navigation.
+
+### Homepage
+
+Create a visually impressive homepage with:
+
+1. **Hero section**
+
+* Large headline: **"Turn Skills Into Confidence."**
+* Supporting text: "FunSkill helps children learn, compete and grow through Chess and Roller Skating."
+* Primary CTA: **Book a Free Trial**
+* Secondary CTA: **Explore Programs**
+* Use energetic, high-quality imagery showing children playing chess and roller skating.
+* Include subtle motion/animation effects.
+
+2. **Two core programs**
+   Create two large interactive cards:
+
+**CHESS**
+"Think. Strategize. Win."
+
+* Beginner to advanced
+* Critical thinking
+* Strategy
+* Competition
+* Age-based training
+* CTA: Explore Chess
+
+**ROLLER SKATING**
+"Balance. Move. Fly."
+
+* Beginner to advanced
+* Balance & coordination
+* Fitness
+* Confidence
+* Competition
+* CTA: Explore Skating
+
+3. **Why FunSkill**
+   Show 4–6 benefits:
+
+* Professional Coaches
+* Safe Learning Environment
+* Beginner to Advanced
+* Confidence Building
+* Competitive Opportunities
+* Fun & Engaging Training
+
+4. **How FunSkill Works**
+   Create a simple 4-step journey:
+
+5. Choose a Skill
+
+6. Book a Trial
+
+7. Train With Coaches
+
+8. Grow & Compete
+
+9. **Programs section**
+   Show programs by age:
+
+* Tiny Champions — Ages 4–6
+* Young Explorers — Ages 7–10
+* Rising Stars — Ages 11–14
+* Future Champions — Ages 15+
+
+Allow users to filter between Chess and Skating.
+
+6. **Schools & Organizations**
+   Create a dedicated section:
+   **"Bring FunSkill to Your School"**
+   Explain that FunSkill can provide structured Chess and Roller Skating programs for schools and organizations.
+   CTA: **Partner With FunSkill**
+
+7. **Coaches**
+   Show professional coach cards with:
+
+* Photo
+* Name
+* Specialty
+* Experience
+* Certifications
+
+8. **Success / statistics section**
+   Use animated counters such as:
+
+* 1,000+ Students
+* 25+ Coaches
+* 50+ Schools
+* 10+ Locations
+
+Make these editable placeholders rather than claiming they are real.
+
+9. **Testimonials**
+   Create parent/student testimonial cards with realistic placeholder content.
+
+10. **Locations**
+    Create an interactive-looking location section with:
+
+* Search location
+* City cards
+* "Find a FunSkill Academy Near You"
+
+11. **Final CTA**
+    Large energetic section:
+    **"Ready to Discover Your Skill?"**
+    "Start your FunSkill journey today."
+    Buttons:
+    **Book a Free Trial**
+    **Contact Us**
+
+12. **Footer**
+    Include:
+
+* FunSkill logo
+* Short company description
+* Programs
+* Company
+* Schools
+* Contact
+* Social media icons
+* Newsletter signup
+* Privacy Policy
+* Terms & Conditions
+
+### Visual identity
+
+Create an original premium sports-academy visual system.
+
+Use:
+
+* Bright, energetic primary color
+* Dark navy/black for contrast
+* White/light backgrounds
+* One secondary accent color
+* Large bold typography
+* Rounded cards
+* Soft shadows
+* Dynamic diagonal/curved shapes
+* Sport-inspired graphic elements
+* High-quality photography
+* Subtle gradients
+
+The design should feel:
+**Premium + Fun + Athletic + Educational + International**
+
+Avoid making it look like a traditional school website.
+
+### Logo
+
+Create a simple modern **FunSkill** wordmark/logo concept.
+
+The logo should communicate:
+**Fun + Learning + Movement + Growth**
+
+Create a small recognizable symbol that can work as:
+
+* Website logo
+* Mobile app icon
+* Social media profile
+* Sports uniform
+* Cap/shirt branding
+
+### UX requirements
+
+Make the website fully responsive for:
+
+* Desktop
+* Tablet
+* Mobile
+
+Use clear CTA hierarchy.
+
+Important CTAs:
+**Book a Free Trial**
+**Explore Programs**
+**Partner With FunSkill**
+
+Create hover states, buttons, cards, navigation states and smooth transitions.
+
+### Figma Make requirements
+
+Build this as a complete clickable website prototype, not just a static landing page.
+
+Create reusable components for:
+
+* Navbar
+* Buttons
+* Program cards
+* Coach cards
+* Testimonial cards
+* Location cards
+* Footer
+* Forms
+* Modals
+
+Create these pages:
+
+1. Home
+2. Programs
+3. Chess
+4. Roller Skating
+5. Schools
+6. About
+7. Coaches
+8. Locations
+9. Contact
+10. Book a Trial
+
+Include realistic placeholder content and images, but make all statistics, names, locations and contact details clearly editable.
+
+The final result should look like a **real international sports academy brand ready to launch**, not a generic AI-generated template.

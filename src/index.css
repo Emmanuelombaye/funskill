@@ -1,0 +1,107 @@
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700;1,800&family=Outfit:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
+
+@theme inline {
+  --color-fs-black: #000000;
+  --color-fs-dark: #111111;
+  --color-fs-card: #181818;
+  --color-fs-yellow: #FFD700;
+  --color-fs-yellow-light: #FFE84D;
+  --color-fs-white: #ffffff;
+  --font-display: 'Barlow Condensed', sans-serif;
+  --font-body: 'Outfit', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: #000000;
+  color: #ffffff;
+  font-family: 'Outfit', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  /* Kids-friendly star/dot pattern on the page background */
+  background-image:
+    radial-gradient(circle, rgba(255,215,0,0.06) 1px, transparent 1px),
+    radial-gradient(circle, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 40px 40px, 80px 80px;
+  background-position: 0 0, 20px 20px;
+}
+
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,215,0,0.4);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #FFD700;
+}
+
+.font-display {
+  font-family: 'Barlow Condensed', sans-serif;
+}
+
+/* Playful floating shapes behind sections */
+.kids-bg {
+  position: relative;
+  overflow: hidden;
+}
+.kids-bg::before {
+  content: '';
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 220px;
+  height: 220px;
+  border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%;
+  background: rgba(255,215,0,0.06);
+  pointer-events: none;
+  animation: blob 8s ease-in-out infinite;
+}
+.kids-bg::after {
+  content: '';
+  position: absolute;
+  bottom: -60px;
+  left: -60px;
+  width: 180px;
+  height: 180px;
+  border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  background: rgba(255,255,255,0.03);
+  pointer-events: none;
+  animation: blob 10s ease-in-out infinite reverse;
+}
+
+@keyframes blob {
+  0%, 100% { border-radius: 40% 60% 70% 30% / 40% 50% 60% 50%; transform: scale(1); }
+  33% { border-radius: 70% 30% 50% 50% / 30% 40% 70% 60%; transform: scale(1.05); }
+  66% { border-radius: 30% 70% 40% 60% / 50% 60% 30% 40%; transform: scale(0.97); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50%       { transform: rotate(2deg); }
+}
+
+.animate-fade-up { animation: fadeUp 0.7s ease forwards; }
+.animate-float   { animation: float 4s ease-in-out infinite; }
+.animate-wiggle  { animation: wiggle 2s ease-in-out infinite; }
