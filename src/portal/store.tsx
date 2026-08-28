@@ -69,19 +69,23 @@ export function PortalProvider({ children }: { children: ReactNode }) {
     flushSync(() => setState(next));
   }
 
-  const user = state.users.find((u) => u.id === state.sessionUserId) ?? null;
+  const raw = state.users.find((u) => u.id === state.sessionUserId) ?? null;
+  const user = raw?.status === "active" ? raw : null;
 
   const api: PortalApi = useMemo(() => ({
     state,
     user,
     homePath: (role) => `/portal/${role}`,
     loginStart: (email, password) => {
-      const found = state.users.find((u) => u.email.toLowerCase() === email.trim().toLowerCase());
-      if (!found) return { ok: false, error: "No account for that email. Register or apply as a coach." };
-      if (found.password !== password) return { ok: false, error: "Wrong password. Demo accounts use: funskill" };
+      const em = email.trim().toLowerCase();
+      const pw = password;
+      if (!em || !pw) return { ok: false, error: "Enter both email and password." };
+      const found = state.users.find((u) => u.email.toLowerCase() === em);
+      if (!found || found.password !== pw) return { ok: false, error: "Email or password is wrong." };
       if (found.status === "pending") return { ok: false, error: "This coach account is waiting for admin approval." };
       if (found.status === "rejected") return { ok: false, error: "This application was declined. Check your email for the note." };
       if (found.status === "suspended") return { ok: false, error: "Account suspended. Contact FunSkill admin." };
+      if (found.status !== "active") return { ok: false, error: "This account cannot sign in." };
       const code = genOtp();
       const channel: "sms" | "email" = found.phone.startsWith("+254") ? "sms" : "email";
       commit({
@@ -95,9 +99,11 @@ export function PortalProvider({ children }: { children: ReactNode }) {
       const otp = state.otp;
       if (!otp) return { ok: false, error: "No code was sent. Start login again." };
       if (Date.now() > otp.expires) return { ok: false, error: "Code expired. Request a new one." };
-      if (code.trim() !== otp.code) return { ok: false, error: "That code does not match. Check the simulator." };
+      const typed = code.replace(/\D/g, "");
+      if (typed.length !== 6) return { ok: false, error: "Enter the full 6-digit code." };
+      if (typed !== otp.code) return { ok: false, error: "That code does not match." };
       const found = state.users.find((u) => u.email === otp.email);
-      if (!found) return { ok: false, error: "User missing." };
+      if (!found || found.status !== "active") return { ok: false, error: "This account cannot sign in." };
       commit({ ...state, otp: null, sessionUserId: found.id });
       return { ok: true, role: found.role };
     },

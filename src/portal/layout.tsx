@@ -39,7 +39,7 @@ const NAV: Record<Role, { to: string; label: string }[]> = {
 
 export function RequireRole({ role, children }: { role: Role; children: ReactNode }) {
   const { user } = usePortal();
-  if (!user) return <Navigate to="/portal/login" replace />;
+  if (!user || user.status !== "active") return <Navigate to="/portal/login" replace />;
   if (user.role !== role) return <Navigate to={`/portal/${user.role}`} replace />;
   return <>{children}</>;
 }
@@ -48,43 +48,44 @@ export default function PortalLayout({ role, children }: { role: Role; children:
   const { user, logout } = usePortal();
   const nav = useNavigate();
   const [open, setOpen] = useState(false);
-  if (!user) return <Navigate to="/portal/login" replace />;
+  if (!user || user.status !== "active") return <Navigate to="/portal/login" replace />;
 
   const items = NAV[role];
 
   return (
-    <div className="min-h-screen flex" style={{ backgroundColor: "#050505", color: "#fff" }}>
+    <div className="min-h-screen flex" style={{ backgroundColor: "#050505", color: "#fff", backgroundImage: "radial-gradient(ellipse at 80% -10%, rgba(255,215,0,0.07), transparent 42%)" }}>
       <aside
-        className={`${open ? "flex" : "hidden"} lg:flex flex-col w-72 shrink-0 fixed lg:sticky top-0 h-screen z-40`}
-        style={{ backgroundColor: "#0b0b0b", borderRight: "1px solid rgba(255,215,0,0.12)", paddingTop: "env(safe-area-inset-top)" }}
+        className={`${open ? "flex" : "hidden"} lg:flex flex-col w-[272px] shrink-0 fixed lg:sticky top-0 h-screen z-40`}
+        style={{ backgroundColor: "rgba(8,8,8,0.96)", borderRight: "1px solid rgba(255,215,0,0.12)", paddingTop: "env(safe-area-inset-top)", backdropFilter: "blur(16px)" }}
       >
-        <div className="px-5 py-5 flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center font-display font-black text-sm" style={{ background: "linear-gradient(135deg,#FFD700,#FFE84D)", color: "#000" }}>FS</div>
+        <div className="px-5 py-6 flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl flex items-center justify-center font-display font-black" style={{ background: "linear-gradient(135deg,#FFD700,#FFE84D)", color: "#000", boxShadow: "0 8px 20px rgba(255,215,0,0.28)" }}>FS</div>
           <div>
-            <div className="font-display font-black">FunSkill</div>
-            <div className="text-[10px] uppercase tracking-widest" style={{ color: "#FFD700" }}>{role} portal</div>
+            <div className="font-display font-black text-lg leading-none">FunSkill</div>
+            <div className="text-[10px] uppercase tracking-[0.18em] mt-1" style={{ color: "#FFD700" }}>{role} portal</div>
           </div>
         </div>
-        <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3 space-y-1 overflow-y-auto pb-4">
           {items.map((i) => (
             <NavLink
               key={i.to}
               to={i.to}
               end={i.to.split("/").length <= 3}
               onClick={() => setOpen(false)}
-              className={({ isActive }) => `block px-3 py-2.5 rounded-xl text-sm ${isActive ? "font-bold" : ""}`}
+              className={({ isActive }) => `block px-3 py-2.5 rounded-2xl text-sm transition-all ${isActive ? "font-bold" : "hover:bg-white/5"}`}
               style={({ isActive }) => ({
                 backgroundColor: isActive ? "#FFD700" : "transparent",
-                color: isActive ? "#000" : "rgba(255,255,255,0.65)",
+                color: isActive ? "#000" : "rgba(255,255,255,0.68)",
+                boxShadow: isActive ? "0 8px 20px rgba(255,215,0,0.22)" : "none",
               })}
             >
               {i.label}
             </NavLink>
           ))}
         </nav>
-        <div className="p-4" style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-          <div className="flex items-center gap-3 mb-3">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center font-display font-black text-xs" style={{ background: "linear-gradient(135deg,#FFD700,#FFE84D)", color: "#000" }}>{user.avatar}</div>
+        <div className="p-4" style={{ borderTop: "1px solid rgba(255,215,0,0.1)" }}>
+          <div className="flex items-center gap-3 mb-3 rounded-2xl p-2" style={{ backgroundColor: "rgba(255,215,0,0.06)" }}>
+            <div className="w-10 h-10 rounded-full flex items-center justify-center font-display font-black text-xs" style={{ background: "linear-gradient(135deg,#FFD700,#FFE84D)", color: "#000" }}>{user.avatar}</div>
             <div className="min-w-0">
               <div className="text-sm font-semibold truncate">{user.name}</div>
               <div className="text-xs truncate" style={{ color: "rgba(255,255,255,0.4)" }}>{user.email}</div>
@@ -93,8 +94,8 @@ export default function PortalLayout({ role, children }: { role: Role; children:
           <button
             type="button"
             onClick={() => { logout(); nav("/portal/login"); }}
-            className="w-full py-2 rounded-full text-sm"
-            style={{ border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.7)" }}
+            className="w-full py-2.5 rounded-full text-sm font-semibold"
+            style={{ border: "1px solid rgba(255,215,0,0.22)", color: "rgba(255,255,255,0.75)" }}
           >
             Sign out
           </button>
@@ -108,7 +109,7 @@ export default function PortalLayout({ role, children }: { role: Role; children:
           <button type="button" onClick={() => setOpen(!open)} className="p-2" aria-label="Menu">☰</button>
         </header>
         {open && <button type="button" className="lg:hidden fixed inset-0 z-30" style={{ backgroundColor: "rgba(0,0,0,0.5)" }} onClick={() => setOpen(false)} aria-label="Close menu" />}
-        <div className="flex-1 px-4 sm:px-8 py-8 max-w-6xl w-full mx-auto">{children}</div>
+        <div className="flex-1 px-4 sm:px-8 py-8 max-w-7xl w-full mx-auto">{children}</div>
       </div>
     </div>
   );

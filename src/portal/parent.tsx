@@ -1,9 +1,10 @@
 import { useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { coaches } from "../data/coaches";
+import { Donut } from "./charts";
 import PortalLayout, { RequireRole } from "./layout";
 import { kidsForParent, nameOf, usePortal } from "./store";
-import { Badge, Card, GoldBtn, Kpi, fieldCls, fieldSt, money, statusTone } from "./ui";
+import { Badge, Card, GoldBtn, Kpi, PageHead, fieldCls, fieldSt, money, statusTone } from "./ui";
 import type { SkillId } from "./types";
 
 function Shell({ children }: { children: ReactNode }) {
@@ -16,32 +17,46 @@ export function ParentHome() {
   const books = state.bookings.filter((b) => b.parentId === user!.id);
   const next = books.filter((b) => b.status === "upcoming").sort((a, b) => a.date.localeCompare(b.date))[0];
   const spent = books.filter((b) => b.payStatus === "paid").reduce((s, b) => s + b.gbp, 0);
+  const pending = books.filter((b) => b.payStatus === "pending").reduce((s, b) => s + b.gbp, 0);
 
   return (
     <Shell>
-      <p className="text-xs uppercase tracking-widest" style={{ color: "#FFD700" }}>Family</p>
-      <h1 className="font-display font-black text-4xl mb-2">Hi {user!.name}</h1>
-      <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>Your kids, their coaches, what you have paid, and what is next on the calendar.</p>
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
+      <PageHead kicker="Family" title={`Hi ${user!.name}`} copy="Your kids, their coaches, what you have paid, and what is next." />
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <Kpi label="Kids" value={String(kids.length)} />
         <Kpi label="Upcoming" value={String(books.filter((b) => b.status === "upcoming").length)} />
-        <Kpi label="Paid to FunSkill" value={`£${spent}`} />
+        <Kpi label="Paid to FunSkill" value={`£${spent}`} spark={books.filter((b) => b.payStatus === "paid").map((b) => b.gbp)} />
       </div>
-      {next && (
-        <Card className="mb-6">
-          <div className="text-xs uppercase tracking-widest mb-2" style={{ color: "#FFD700" }}>Next session</div>
-          <div className="font-display font-black text-3xl">{state.kids.find((k) => k.id === next.kidId)?.name}</div>
-          <div className="text-sm" style={{ color: "rgba(255,255,255,0.6)" }}>{next.date} at {next.time} with {coaches.find((c) => c.slug === next.coachSlug)?.name}</div>
-          <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>{next.location} · {next.type} · {money(next.gbp, next.kes)}</div>
+      <div className="grid lg:grid-cols-5 gap-5 mb-6">
+        {next && (
+          <Card className="lg:col-span-3" title="Next session">
+            <div className="font-display font-black text-4xl">{state.kids.find((k) => k.id === next.kidId)?.name}</div>
+            <div className="text-sm mt-2" style={{ color: "rgba(255,255,255,0.6)" }}>{next.date} at {next.time} with {coaches.find((c) => c.slug === next.coachSlug)?.name}</div>
+            <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>{next.location} · {next.type} · {money(next.gbp, next.kes)}</div>
+          </Card>
+        )}
+        <Card className={`${next ? "lg:col-span-2" : "lg:col-span-5"}`} title="Spend mix">
+          <Donut
+            slices={[
+              { label: "Paid", value: spent || 0, color: "#3ddc84" },
+              { label: "Pending", value: pending || 0, color: "#FFD700" },
+            ].filter((s) => s.value > 0)}
+            center={`£${spent}`}
+          />
         </Card>
-      )}
+      </div>
       <div className="grid sm:grid-cols-2 gap-4">
         {kids.map((k) => (
           <Card key={k.id}>
-            <div className="font-display font-black text-2xl">{k.name}</div>
-            <div className="text-sm" style={{ color: "#FFD700" }}>{k.skill} · {k.level} · {k.age} yrs</div>
-            <p className="text-sm mt-2" style={{ color: "rgba(255,255,255,0.55)" }}>{k.notes}</p>
-            <p className="text-xs mt-2" style={{ color: "rgba(255,255,255,0.4)" }}>Next goal: {k.nextGoal}</p>
+            <div className="flex items-start gap-4">
+              <div className="w-12 h-12 rounded-2xl flex items-center justify-center font-display font-black" style={{ background: "linear-gradient(135deg,#FFD700,#FFE84D)", color: "#000" }}>{k.name.slice(0, 1)}</div>
+              <div>
+                <div className="font-display font-black text-2xl">{k.name}</div>
+                <div className="text-sm" style={{ color: "#FFD700" }}>{k.skill} · {k.level} · {k.age} yrs</div>
+                <p className="text-sm mt-2" style={{ color: "rgba(255,255,255,0.55)" }}>{k.notes}</p>
+                <p className="text-xs mt-2" style={{ color: "rgba(255,255,255,0.4)" }}>Next goal: {k.nextGoal}</p>
+              </div>
+            </div>
           </Card>
         ))}
       </div>
@@ -215,30 +230,45 @@ export function ParentBookings() {
 export function ParentPayments() {
   const { user, state, payBooking } = usePortal();
   const books = state.bookings.filter((b) => b.parentId === user!.id);
+  const paid = books.filter((b) => b.payStatus === "paid").reduce((s, b) => s + b.gbp, 0);
+  const pending = books.filter((b) => b.payStatus === "pending").reduce((s, b) => s + b.gbp, 0);
+  const refunded = books.filter((b) => b.payStatus === "refunded").reduce((s, b) => s + b.gbp, 0);
 
   return (
     <Shell>
-      <h1 className="font-display font-black text-4xl mb-8">Payments</h1>
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
-        <Kpi label="Paid" value={`£${books.filter((b) => b.payStatus === "paid").reduce((s, b) => s + b.gbp, 0)}`} />
-        <Kpi label="Pending" value={`£${books.filter((b) => b.payStatus === "pending").reduce((s, b) => s + b.gbp, 0)}`} />
-        <Kpi label="Refunded" value={`£${books.filter((b) => b.payStatus === "refunded").reduce((s, b) => s + b.gbp, 0)}`} />
+      <PageHead kicker="Family" title="Payments" />
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+        <Kpi label="Paid" value={`£${paid}`} spark={books.filter((b) => b.payStatus === "paid").map((b) => b.gbp)} />
+        <Kpi label="Pending" value={`£${pending}`} />
+        <Kpi label="Refunded" value={`£${refunded}`} />
       </div>
-      <Card>
-        <ul className="text-sm space-y-3">
-          {books.map((b) => (
-            <li key={b.id} className="flex flex-wrap justify-between gap-3 items-center" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: 8 }}>
-              <span>{b.date} · {b.payMethod} · {state.kids.find((k) => k.id === b.kidId)?.name}</span>
-              <span className="flex items-center gap-3">
-                {money(b.gbp, b.kes)} <Badge tone={statusTone(b.payStatus)}>{b.payStatus}</Badge>
-                {b.payStatus === "pending" && b.status !== "cancelled" && (
-                  <GoldBtn onClick={() => payBooking(b.id)}>Pay now</GoldBtn>
-                )}
-              </span>
-            </li>
-          ))}
-        </ul>
-      </Card>
+      <div className="grid lg:grid-cols-5 gap-5">
+        <Card className="lg:col-span-2" title="Balance">
+          <Donut
+            slices={[
+              { label: "Paid", value: paid, color: "#3ddc84" },
+              { label: "Pending", value: pending, color: "#FFD700" },
+              { label: "Refunded", value: refunded, color: "#ff8a8a" },
+            ].filter((s) => s.value > 0)}
+            center={`£${paid}`}
+          />
+        </Card>
+        <Card className="lg:col-span-3" title="Receipts">
+          <ul className="text-sm space-y-3">
+            {books.map((b) => (
+              <li key={b.id} className="flex flex-wrap justify-between gap-3 items-center" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: 8 }}>
+                <span>{b.date} · {b.payMethod} · {state.kids.find((k) => k.id === b.kidId)?.name}</span>
+                <span className="flex items-center gap-3">
+                  {money(b.gbp, b.kes)} <Badge tone={statusTone(b.payStatus)}>{b.payStatus}</Badge>
+                  {b.payStatus === "pending" && b.status !== "cancelled" && (
+                    <GoldBtn onClick={() => payBooking(b.id)}>Pay now</GoldBtn>
+                  )}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </Card>
+      </div>
     </Shell>
   );
 }

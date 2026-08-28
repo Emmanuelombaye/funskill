@@ -1,8 +1,9 @@
 import { type ReactNode, useState } from "react";
 import { coaches } from "../data/coaches";
+import { Donut } from "./charts";
 import PortalLayout, { RequireRole } from "./layout";
 import { nameOf, usePortal } from "./store";
-import { Badge, Card, GoldBtn, Kpi, fieldCls, fieldSt, statusTone } from "./ui";
+import { Badge, Card, GoldBtn, Kpi, PageHead, fieldCls, fieldSt, statusTone } from "./ui";
 
 function Shell({ children }: { children: ReactNode }) {
   return <RequireRole role="school"><PortalLayout role="school">{children}</PortalLayout></RequireRole>;
@@ -12,28 +13,37 @@ export function SchoolHome() {
   const { user, state } = usePortal();
   const org = state.schools.find((s) => s.id === user?.schoolId);
   const sessions = state.bookings.filter((b) => b.schoolId === org?.id || (b.type === "school" && b.parentId === user?.id));
+  const invoices = state.invoices.filter((inv) => inv.schoolId === org?.id);
 
   return (
     <Shell>
-      <p className="text-xs uppercase tracking-widest" style={{ color: "#FFD700" }}>School partnership</p>
-      <h1 className="font-display font-black text-4xl mb-2">{org?.name}</h1>
-      <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>Signed in as {user?.name}. Term delivery, pupil counts, and invoices for FunSkill in school.</p>
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
+      <PageHead kicker="School partnership" title={org?.name ?? "School"} copy={`Signed in as ${user?.name}. Term delivery, pupil counts, and invoices.`} />
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <Kpi label="Pupils on programme" value={String(org?.pupils ?? 0)} />
         <Kpi label="Term fee" value={`£${org?.termFeeGbp.toLocaleString()}`} />
         <Kpi label="Status" value={org?.status === "active" ? "Active" : "Trial"} />
       </div>
-      <Card>
-        <h2 className="font-display font-bold text-xl mb-3">This term's FunSkill blocks</h2>
-        <ul className="space-y-3 text-sm">
-          {sessions.map((b) => (
-            <li key={b.id} className="flex justify-between gap-3">
-              <span>{b.date} {b.time} · {b.skill} · {coaches.find((c) => c.slug === b.coachSlug)?.name}</span>
-              <Badge tone={statusTone(b.status)}>{b.status}</Badge>
-            </li>
-          ))}
-        </ul>
-      </Card>
+      <div className="grid lg:grid-cols-5 gap-5">
+        <Card className="lg:col-span-3" title="This term's FunSkill blocks">
+          <ul className="space-y-3 text-sm">
+            {sessions.map((b) => (
+              <li key={b.id} className="flex justify-between gap-3 rounded-2xl p-3" style={{ backgroundColor: "rgba(255,255,255,0.03)" }}>
+                <span>{b.date} {b.time} · {b.skill} · {coaches.find((c) => c.slug === b.coachSlug)?.name}</span>
+                <Badge tone={statusTone(b.status)}>{b.status}</Badge>
+              </li>
+            ))}
+          </ul>
+        </Card>
+        <Card className="lg:col-span-2" title="Invoices">
+          <Donut
+            slices={[
+              { label: "Paid", value: invoices.filter((i) => i.status === "paid").length, color: "#3ddc84" },
+              { label: "Pending", value: invoices.filter((i) => i.status === "pending").length, color: "#FFD700" },
+            ].filter((s) => s.value > 0)}
+            center={`£${invoices.filter((i) => i.status === "paid").reduce((s, i) => s + i.amountGbp, 0).toLocaleString()}`}
+          />
+        </Card>
+      </div>
     </Shell>
   );
 }

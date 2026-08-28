@@ -1,9 +1,10 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { coaches, formatPrivate } from "../data/coaches";
+import { AreaChart, Donut, GroupedBars, HBars } from "./charts";
 import PortalLayout, { RequireRole } from "./layout";
 import { bookingsForCoach, nameOf, usePortal } from "./store";
-import { Badge, Card, GhostBtn, GoldBtn, Kpi, fieldCls, fieldSt, money, statusTone } from "./ui";
+import { Badge, Card, GhostBtn, GoldBtn, Kpi, PageHead, fieldCls, fieldSt, money, statusTone } from "./ui";
 
 function Shell({ children }: { children: ReactNode }) {
   return <RequireRole role="admin"><PortalLayout role="admin">{children}</PortalLayout></RequireRole>;
@@ -17,33 +18,51 @@ export function AdminOverview() {
   const pendingApps = state.applications.filter((a) => a.status === "pending").length;
   const views7 = state.pageViews.reduce((s, d) => s + d.home + d.coaches + d.book + d.programs, 0);
   const unread = state.messages.filter((m) => m.status === "unread").length;
+  const byType = ["private", "group", "trial", "school"].map((t) => ({
+    label: t,
+    value: state.bookings.filter((b) => b.type === t).length,
+    color: t === "private" ? "#FFD700" : t === "group" ? "#FFE84D" : t === "trial" ? "#8ec5ff" : "#3ddc84",
+  }));
 
   return (
     <Shell>
-      <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
-        <div>
-          <p className="text-xs uppercase tracking-widest" style={{ color: "#FFD700" }}>Admin</p>
-          <h1 className="font-display font-black text-4xl">Club control</h1>
-          <p className="text-sm mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>Live simulation of FunSkill operations — views, money, people, and coach hiring.</p>
-        </div>
-        <GhostBtn onClick={() => { if (confirm("Reset all portal demo data?")) resetDemo(); }}>Reset demo data</GhostBtn>
-      </div>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        <Kpi label="7-day site views" value={views7.toLocaleString()} hint="Home + coaches + book + programmes" />
-        <Kpi label="Upcoming sessions" value={String(upcoming.length)} hint={`${state.bookings.filter((b) => b.status === "completed").length} completed`} />
+      <PageHead
+        kicker="Admin"
+        title="Club control"
+        copy="Views, money, people, and hiring — live in this browser."
+        action={<GhostBtn onClick={() => { if (confirm("Reset all portal demo data?")) resetDemo(); }}>Reset demo data</GhostBtn>}
+      />
+      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <Kpi label="7-day site views" value={views7.toLocaleString()} hint="Home + coaches + book + programmes" spark={state.pageViews.map((d) => d.home + d.coaches + d.book + d.programs)} />
+        <Kpi label="Upcoming sessions" value={String(upcoming.length)} hint={`${state.bookings.filter((b) => b.status === "completed").length} completed`} spark={state.pageViews.map((d) => d.book)} />
         <Kpi label="Collected (GBP)" value={`£${revenue.toLocaleString()}`} hint="Paid bookings only" />
         <Kpi label="Hiring queue" value={String(pendingApps)} hint={`${unread} unread messages`} />
       </div>
+      <div className="grid lg:grid-cols-5 gap-5 mb-5">
+        <Card className="lg:col-span-3" title="Traffic this week" subtitle="Four public surfaces, one gold line each.">
+          <AreaChart
+            labels={state.pageViews.map((d) => d.day)}
+            series={[
+              { label: "Home", color: "#FFD700", values: state.pageViews.map((d) => d.home) },
+              { label: "Coaches", color: "#FFE84D", values: state.pageViews.map((d) => d.coaches) },
+              { label: "Book", color: "#8ec5ff", values: state.pageViews.map((d) => d.book) },
+              { label: "Programmes", color: "#3ddc84", values: state.pageViews.map((d) => d.programs) },
+            ]}
+          />
+        </Card>
+        <Card className="lg:col-span-2" title="Session mix" subtitle="Every booking on the ledger.">
+          <Donut slices={byType} center={String(state.bookings.length)} />
+        </Card>
+      </div>
       <div className="grid lg:grid-cols-2 gap-5">
-        <Card>
-          <h2 className="font-display font-bold text-xl mb-4">Who is booked next</h2>
+        <Card title="Who is booked next" subtitle="Parent name sits under each kid.">
           <ul className="space-y-3">
             {upcoming.slice(0, 6).map((b) => {
               const coach = coaches.find((c) => c.slug === b.coachSlug);
               const parent = nameOf(state.users, b.parentId);
               const kid = state.kids.find((k) => k.id === b.kidId);
               return (
-                <li key={b.id} className="flex justify-between gap-3 text-sm" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)", paddingBottom: 10 }}>
+                <li key={b.id} className="flex justify-between gap-3 text-sm rounded-2xl p-3" style={{ backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,255,255,0.05)" }}>
                   <div>
                     <div className="font-semibold">{kid?.name} · {coach?.name}</div>
                     <div style={{ color: "rgba(255,255,255,0.4)" }}>{b.date} {b.time} · booked by {parent}</div>
@@ -54,25 +73,14 @@ export function AdminOverview() {
             })}
           </ul>
         </Card>
-        <Card>
-          <h2 className="font-display font-bold text-xl mb-4">Coach demand (profile views)</h2>
-          <ul className="space-y-3">
-            {[...state.coachViews].sort((a, b) => b.views - a.views).slice(0, 6).map((v) => {
-              const c = coaches.find((x) => x.slug === v.slug);
-              const max = Math.max(...state.coachViews.map((x) => x.views));
-              return (
-                <li key={v.slug}>
-                  <div className="flex justify-between text-sm mb-1">
-                    <span>{c?.name}</span>
-                    <span style={{ color: "#FFD700" }}>{v.views} views · {v.bookClicks} book clicks</span>
-                  </div>
-                  <div className="h-1.5 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.06)" }}>
-                    <div className="h-1.5 rounded-full" style={{ width: `${(v.views / max) * 100}%`, background: "linear-gradient(90deg,#FFD700,#FFE84D)" }} />
-                  </div>
-                </li>
-              );
-            })}
-          </ul>
+        <Card title="Coach demand" subtitle="Profile views driving book clicks.">
+          <HBars
+            rows={[...state.coachViews].sort((a, b) => b.views - a.views).slice(0, 6).map((v) => ({
+              label: coaches.find((x) => x.slug === v.slug)?.name ?? v.slug,
+              value: v.views,
+              meta: `${v.views} views · ${v.bookClicks} clicks`,
+            }))}
+          />
         </Card>
       </div>
     </Shell>
@@ -81,60 +89,65 @@ export function AdminOverview() {
 
 export function AdminAnalytics() {
   const { state } = usePortal();
-  const max = Math.max(...state.pageViews.flatMap((d) => [d.home, d.coaches, d.book, d.programs]));
   const totals = state.pageViews.reduce((a, d) => ({ home: a.home + d.home, coaches: a.coaches + d.coaches, book: a.book + d.book, programs: a.programs + d.programs }), { home: 0, coaches: 0, book: 0, programs: 0 });
   const conv = ((totals.book / totals.coaches) * 100).toFixed(1);
 
   return (
     <Shell>
-      <h1 className="font-display font-black text-4xl mb-2">Traffic & conversion</h1>
-      <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>Simulated last 7 days. Coach profile views drive private-book clicks.</p>
-      <div className="grid sm:grid-cols-4 gap-4 mb-8">
-        <Kpi label="Home" value={totals.home.toLocaleString()} />
-        <Kpi label="Coach pages" value={totals.coaches.toLocaleString()} />
-        <Kpi label="Book funnel" value={totals.book.toLocaleString()} />
+      <PageHead kicker="Analytics" title="Traffic & conversion" copy="Last 7 days. Coach profile views drive private-book clicks." />
+      <div className="grid sm:grid-cols-4 gap-4 mb-6">
+        <Kpi label="Home" value={totals.home.toLocaleString()} spark={state.pageViews.map((d) => d.home)} />
+        <Kpi label="Coach pages" value={totals.coaches.toLocaleString()} spark={state.pageViews.map((d) => d.coaches)} />
+        <Kpi label="Book funnel" value={totals.book.toLocaleString()} spark={state.pageViews.map((d) => d.book)} />
         <Kpi label="Coach → book" value={`${conv}%`} />
       </div>
-      <Card>
-        <h2 className="font-display font-bold text-xl mb-6">Daily bars</h2>
-        <div className="space-y-4">
-          {state.pageViews.map((d) => (
-            <div key={d.day}>
-              <div className="text-xs mb-2" style={{ color: "rgba(255,255,255,0.4)" }}>{d.day}</div>
-              {(["home", "coaches", "book", "programs"] as const).map((k) => (
-                <div key={k} className="flex items-center gap-3 mb-1">
-                  <span className="w-20 text-[10px] uppercase" style={{ color: "rgba(255,255,255,0.35)" }}>{k}</span>
-                  <div className="flex-1 h-2 rounded-full" style={{ backgroundColor: "rgba(255,255,255,0.06)" }}>
-                    <div className="h-2 rounded-full" style={{ width: `${(d[k] / max) * 100}%`, backgroundColor: k === "book" ? "#FFD700" : "rgba(255,215,0,0.45)" }} />
-                  </div>
-                  <span className="w-10 text-xs text-right">{d[k]}</span>
-                </div>
-              ))}
-            </div>
-          ))}
+      <div className="grid lg:grid-cols-5 gap-5 mb-6">
+        <Card className="lg:col-span-3" title="Daily grouped bars" subtitle="Home, coaches, book, programmes.">
+          <GroupedBars
+            labels={state.pageViews.map((d) => d.day)}
+            series={[
+              { label: "Home", color: "#FFD700", values: state.pageViews.map((d) => d.home) },
+              { label: "Coaches", color: "#C9A227", values: state.pageViews.map((d) => d.coaches) },
+              { label: "Book", color: "#8ec5ff", values: state.pageViews.map((d) => d.book) },
+              { label: "Programmes", color: "#3ddc84", values: state.pageViews.map((d) => d.programs) },
+            ]}
+          />
+        </Card>
+        <Card className="lg:col-span-2" title="Share of traffic" subtitle="Stacked as a donut.">
+          <Donut
+            slices={[
+              { label: "Home", value: totals.home, color: "#FFD700" },
+              { label: "Coaches", value: totals.coaches, color: "#C9A227" },
+              { label: "Book", value: totals.book, color: "#8ec5ff" },
+              { label: "Programmes", value: totals.programs, color: "#3ddc84" },
+            ]}
+            center="7d"
+          />
+        </Card>
+      </div>
+      <Card title="Coach conversion table">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr style={{ color: "rgba(255,255,255,0.4)" }}>{["Coach", "Views", "Unique", "Book clicks", "Rate"].map((h) => <th key={h} className="text-left py-2 font-medium">{h}</th>)}</tr>
+            </thead>
+            <tbody>
+              {[...state.coachViews].sort((a, b) => b.views - a.views).map((v) => {
+                const c = coaches.find((x) => x.slug === v.slug);
+                return (
+                  <tr key={v.slug} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+                    <td className="py-3">{c?.name}</td>
+                    <td>{v.views}</td>
+                    <td>{v.unique}</td>
+                    <td>{v.bookClicks}</td>
+                    <td style={{ color: "#FFD700" }}>{((v.bookClicks / v.views) * 100).toFixed(1)}%</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       </Card>
-      <div className="mt-6 overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr style={{ color: "rgba(255,255,255,0.4)" }}>{["Coach", "Views", "Unique", "Book clicks", "Rate"].map((h) => <th key={h} className="text-left py-2 font-medium">{h}</th>)}</tr>
-          </thead>
-          <tbody>
-            {[...state.coachViews].sort((a, b) => b.views - a.views).map((v) => {
-              const c = coaches.find((x) => x.slug === v.slug);
-              return (
-                <tr key={v.slug} style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-                  <td className="py-3">{c?.name}</td>
-                  <td>{v.views}</td>
-                  <td>{v.unique}</td>
-                  <td>{v.bookClicks}</td>
-                  <td style={{ color: "#FFD700" }}>{((v.bookClicks / v.views) * 100).toFixed(1)}%</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
     </Shell>
   );
 }

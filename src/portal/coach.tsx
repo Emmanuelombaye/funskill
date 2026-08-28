@@ -1,9 +1,10 @@
 import { useMemo, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { coaches } from "../data/coaches";
+import { BarChart, Donut } from "./charts";
 import PortalLayout, { RequireRole } from "./layout";
 import { bookingsForCoach, nameOf, usePortal } from "./store";
-import { Badge, Card, GhostBtn, GoldBtn, Kpi, fieldCls, fieldSt, money, statusTone } from "./ui";
+import { Badge, Card, GhostBtn, GoldBtn, Kpi, PageHead, fieldCls, fieldSt, money, statusTone } from "./ui";
 
 function Shell({ children }: { children: ReactNode }) {
   return <RequireRole role="coach"><PortalLayout role="coach">{children}</PortalLayout></RequireRole>;
@@ -22,44 +23,51 @@ export function CoachHome() {
   const { mine, coach, price, state } = useMe();
   const today = mine.filter((b) => b.status === "upcoming").sort((a, b) => a.date.localeCompare(b.date) || a.time.localeCompare(b.time));
   const earned = mine.filter((b) => b.payStatus === "paid" && b.status === "completed").reduce((s, b) => s + b.gbp, 0);
+  const mix = ["private", "group", "trial", "school"].map((t) => ({
+    label: t,
+    value: mine.filter((b) => b.type === t).length,
+    color: t === "private" ? "#FFD700" : t === "group" ? "#FFE84D" : t === "trial" ? "#8ec5ff" : "#3ddc84",
+  })).filter((s) => s.value > 0);
 
   return (
     <Shell>
-      <p className="text-xs uppercase tracking-widest" style={{ color: "#FFD700" }}>Coach desk</p>
-      <h1 className="font-display font-black text-4xl mb-2">{coach?.name}</h1>
-      <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>{coach?.role} · private {money(price.privateGbp, price.privateKes)}</p>
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
+      <PageHead kicker="Coach desk" title={coach?.name ?? "Coach"} copy={`${coach?.role} · private ${money(price.privateGbp, price.privateKes)}`} />
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
         <Kpi label="Upcoming with you" value={String(today.length)} />
-        <Kpi label="Completed paid" value={`£${earned}`} />
+        <Kpi label="Completed paid" value={`£${earned}`} spark={mine.filter((b) => b.payStatus === "paid").map((b) => b.gbp)} />
         <Kpi label="Students in ledger" value={String(new Set(mine.map((b) => b.kidId)).size)} />
       </div>
-      <Card>
-        <h2 className="font-display font-bold text-xl mb-4">Next on the floor</h2>
-        {today.length === 0 && <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>No upcoming sessions. Enjoy the quiet — or check applications with admin.</p>}
-        <ul className="space-y-4">
-          {today.map((b) => {
-            const kid = state.kids.find((k) => k.id === b.kidId);
-            const parent = state.users.find((u) => u.id === b.parentId);
-            return (
-              <li key={b.id} className="rounded-xl p-4" style={{ backgroundColor: "rgba(255,255,255,0.03)" }}>
-                <div className="flex flex-wrap justify-between gap-2">
-                  <div>
-                    <div className="font-display font-black text-xl">{kid?.name}</div>
-                    <div className="text-sm" style={{ color: "#FFD700" }}>{b.date} · {b.time} · {b.durationMins} min · {b.location}</div>
-                    <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>Booked by {parent?.name} · {parent?.phone} · {parent?.email}</div>
-                    <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>Medical: {kid?.medical} · Goal: {kid?.nextGoal}</div>
-                    {b.notes && <div className="text-sm mt-2">{b.notes}</div>}
+      <div className="grid lg:grid-cols-5 gap-5">
+        <Card className="lg:col-span-3" title="Next on the floor">
+          {today.length === 0 && <p className="text-sm" style={{ color: "rgba(255,255,255,0.4)" }}>No upcoming sessions.</p>}
+          <ul className="space-y-4">
+            {today.map((b) => {
+              const kid = state.kids.find((k) => k.id === b.kidId);
+              const parent = state.users.find((u) => u.id === b.parentId);
+              return (
+                <li key={b.id} className="rounded-2xl p-4" style={{ backgroundColor: "rgba(255,255,255,0.03)", border: "1px solid rgba(255,215,0,0.1)" }}>
+                  <div className="flex flex-wrap justify-between gap-2">
+                    <div>
+                      <div className="font-display font-black text-xl">{kid?.name}</div>
+                      <div className="text-sm" style={{ color: "#FFD700" }}>{b.date} · {b.time} · {b.durationMins} min · {b.location}</div>
+                      <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.45)" }}>Booked by {parent?.name} · {parent?.phone} · {parent?.email}</div>
+                      <div className="text-xs mt-1" style={{ color: "rgba(255,255,255,0.4)" }}>Medical: {kid?.medical} · Goal: {kid?.nextGoal}</div>
+                      {b.notes && <div className="text-sm mt-2">{b.notes}</div>}
+                    </div>
+                    <div className="flex flex-col items-end gap-2">
+                      <Badge tone={statusTone(b.type)}>{b.type}</Badge>
+                      <span className="text-sm">{money(b.gbp, b.kes)}</span>
+                    </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge tone={statusTone(b.type)}>{b.type}</Badge>
-                    <span className="text-sm">{money(b.gbp, b.kes)}</span>
-                  </div>
-                </div>
-              </li>
-            );
-          })}
-        </ul>
-      </Card>
+                </li>
+              );
+            })}
+          </ul>
+        </Card>
+        <Card className="lg:col-span-2" title="Your mix" subtitle="Sessions on your ledger.">
+          <Donut slices={mix.length ? mix : [{ label: "None", value: 1, color: "rgba(255,255,255,0.15)" }]} center={String(mine.length)} />
+        </Card>
+      </div>
     </Shell>
   );
 }
@@ -149,15 +157,31 @@ export function CoachEarnings() {
 
   return (
     <Shell>
-      <h1 className="font-display font-black text-4xl mb-2">Earnings</h1>
-      <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.45)" }}>Your public private rate is {money(price.privateGbp, price.privateKes)}. Admin can change this from Coaches & pricing.</p>
-      <div className="grid sm:grid-cols-3 gap-4 mb-8">
-        <Kpi label="Paid to club (your sessions)" value={`£${paid.reduce((s, b) => s + b.gbp, 0)}`} />
+      <PageHead kicker="Money" title="Earnings" copy={`Public private rate ${money(price.privateGbp, price.privateKes)}. Admin can change this.`} />
+      <div className="grid sm:grid-cols-3 gap-4 mb-6">
+        <Kpi label="Paid to club (your sessions)" value={`£${paid.reduce((s, b) => s + b.gbp, 0)}`} spark={paid.map((b) => b.gbp)} />
         <Kpi label="Pending" value={`£${pending.reduce((s, b) => s + b.gbp, 0)}`} />
         <Kpi label="Refunded" value={`£${refunded.reduce((s, b) => s + b.gbp, 0)}`} />
       </div>
-      <Card>
-        <h2 className="font-display font-bold text-xl mb-4">Ledger</h2>
+      <div className="grid lg:grid-cols-5 gap-5 mb-5">
+        <Card className="lg:col-span-3" title="Fees on the ledger" subtitle="£ per session, newest first.">
+          <BarChart
+            labels={mine.slice(0, 8).map((b) => b.date.slice(5))}
+            values={mine.slice(0, 8).map((b) => b.gbp)}
+          />
+        </Card>
+        <Card className="lg:col-span-2" title="Pay status">
+          <Donut
+            slices={[
+              { label: "Paid", value: paid.length, color: "#3ddc84" },
+              { label: "Pending", value: pending.length, color: "#FFD700" },
+              { label: "Refunded", value: refunded.length, color: "#ff8a8a" },
+            ].filter((s) => s.value > 0)}
+            center={`£${paid.reduce((s, b) => s + b.gbp, 0)}`}
+          />
+        </Card>
+      </div>
+      <Card title="Ledger">
         <ul className="space-y-2 text-sm">
           {mine.map((b) => (
             <li key={b.id} className="flex justify-between gap-3 py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
