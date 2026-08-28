@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { TrackPage } from "../portal/track";
 
 function useCountUp(target: number, duration = 2000, start = false) {
   const [count, setCount] = useState(0);
@@ -91,7 +92,7 @@ export default function Home() {
 
   return (
     <div>
-      {/* HERO */}
+      <TrackPage page="home" />
       <section className="relative min-h-screen flex items-center pt-nav overflow-hidden" style={{ backgroundColor: "#000000" }}>
         {/* bg shapes */}
         <div className="absolute inset-0 pointer-events-none">

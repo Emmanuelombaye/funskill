@@ -14,6 +14,7 @@ const company = [
   { label: "Coaches", to: "/coaches" },
   { label: "Locations", to: "/locations" },
   { label: "Contact", to: "/contact" },
+  { label: "Portals", to: "/portal/login" },
 ];
 
 export default function Footer() {

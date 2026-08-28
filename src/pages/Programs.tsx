@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { TrackPage } from "../portal/track";
 
 const programs = [
   {
@@ -45,6 +46,7 @@ export default function Programs() {
 
   return (
     <div className="pt-nav">
+      <TrackPage page="programs" />
       {/* Header */}
       <section className="py-20 px-6 relative overflow-hidden" style={{ backgroundColor: "#000000" }}>
         <div className="absolute inset-0" style={{ backgroundImage: "linear-gradient(rgba(255,215,0,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,215,0,0.04) 1px, transparent 1px)", backgroundSize: "64px 64px" }} />

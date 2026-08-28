@@ -70,7 +70,7 @@ export default function Navbar() {
               key={l.to}
               to={l.to}
               className="text-sm font-medium transition-colors"
-              style={{ color: pathname === l.to ? "#FFD700" : "rgba(255,255,255,0.65)", fontFamily: "Outfit, sans-serif" }}
+              style={{ color: (l.to === "/coaches" ? pathname.startsWith("/coaches") : pathname === l.to) ? "#FFD700" : "rgba(255,255,255,0.65)", fontFamily: "Outfit, sans-serif" }}
             >
               {l.label}
             </Link>
@@ -121,7 +121,7 @@ export default function Navbar() {
               key={l.to}
               to={l.to}
               className="text-sm font-medium transition-colors"
-              style={{ color: pathname === l.to ? "#FFD700" : "rgba(255,255,255,0.65)", fontFamily: "Outfit, sans-serif" }}
+              style={{ color: (l.to === "/coaches" ? pathname.startsWith("/coaches") : pathname === l.to) ? "#FFD700" : "rgba(255,255,255,0.65)", fontFamily: "Outfit, sans-serif" }}
             >
               {l.label}
             </Link>
@@ -129,6 +129,13 @@ export default function Navbar() {
         </nav>
 
         <div className="hidden lg:flex items-center gap-3">
+          <Link
+            to="/portal/login"
+            className="text-sm font-medium"
+            style={{ color: pathname.startsWith("/portal") ? "#FFD700" : "rgba(255,255,255,0.65)", fontFamily: "Outfit, sans-serif" }}
+          >
+            Portal
+          </Link>
           <Link
             to="/book"
             className="px-5 py-2 rounded-full text-sm font-semibold transition-all hover:scale-105"
@@ -190,11 +197,19 @@ export default function Navbar() {
               key={l.to}
               to={l.to}
               className="text-base font-medium py-2"
-              style={{ color: pathname === l.to ? "#FFD700" : "rgba(255,255,255,0.75)", fontFamily: "Outfit, sans-serif" }}
+              style={{ color: (l.to === "/coaches" ? pathname.startsWith("/coaches") : pathname === l.to) ? "#FFD700" : "rgba(255,255,255,0.75)", fontFamily: "Outfit, sans-serif" }}
             >
               {l.label}
             </Link>
           ))}
+          <Link
+            to="/portal/login"
+            onClick={() => setOpen(false)}
+            className="text-base font-medium py-2"
+            style={{ color: "rgba(255,255,255,0.75)", fontFamily: "Outfit, sans-serif" }}
+          >
+            Portal login
+          </Link>
           <Link
             to="/book"
             className="mt-2 px-5 py-3 rounded-full text-sm font-semibold text-center"

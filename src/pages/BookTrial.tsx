@@ -1,5 +1,9 @@
 import { useState, type FormEvent } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { formatPrivate, getCoach } from "../data/coaches";
+import { usePortal } from "../portal/store";
+import { TrackPage } from "../portal/track";
+import type { SkillId } from "../portal/types";
 
 type PayMethod = "mpesa" | "paypal" | null;
 
@@ -39,18 +43,25 @@ const inputStyle = {
 const inputFocus = "w-full px-4 py-3 rounded-xl text-sm outline-none transition-all focus:ring-1 focus:ring-yellow-400";
 
 export default function BookTrial() {
-  const [skill, setSkill]         = useState<string>("");
+  const [searchParams] = useSearchParams();
+  const { user, state, createBooking } = usePortal();
+  const coach = getCoach(searchParams.get("coach") || "");
+  const isPrivate = searchParams.get("type") === "private";
+  const [skill, setSkill]         = useState<string>(coach?.skillIds[0] || "");
   const [childName, setChildName] = useState("");
   const [childAge, setChildAge]   = useState("");
   const [parentName, setParentName] = useState("");
   const [email, setEmail]         = useState("");
   const [phone, setPhone]         = useState("");
-  const [location, setLocation]   = useState("");
+  const [location, setLocation]   = useState(coach?.location || "");
   const [payMethod, setPayMethod] = useState<PayMethod>(null);
   const [mpesaNum, setMpesaNum]   = useState("");
   const [errors, setErrors]       = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [paying, setPaying]       = useState(false);
+
+  const feeGbp = isPrivate && coach ? (state.pricing[coach.slug]?.privateGbp ?? coach.privateGbp) : 10;
+  const feeKes = isPrivate && coach ? (state.pricing[coach.slug]?.privateKes ?? coach.privateKes) : 1500;
 
   function validate() {
     const e: Record<string, string> = {};
@@ -75,7 +86,42 @@ export default function BookTrial() {
     setErrors(errs);
     if (Object.keys(errs).length > 0) return;
     setPaying(true);
-    setTimeout(() => { setPaying(false); setSubmitted(true); }, 1800);
+    setTimeout(() => {
+      const parent = user?.role === "parent"
+        ? user
+        : state.users.find((u) => u.role === "parent" && u.email.toLowerCase() === email.trim().toLowerCase());
+      if (parent) {
+        const kid =
+          state.kids.find((k) => k.parentId === parent.id && k.name.toLowerCase() === childName.trim().toLowerCase())
+          ?? state.kids.find((k) => k.parentId === parent.id);
+        if (kid) {
+          const when = new Date();
+          when.setDate(when.getDate() + 3);
+          const skillId: SkillId = skill === "both" || skill === ""
+            ? (coach?.skillIds[0] ?? kid.skill)
+            : (skill as SkillId);
+          createBooking({
+            type: isPrivate ? "private" : "trial",
+            status: "upcoming",
+            skill: skillId,
+            coachSlug: coach?.slug ?? "james-chen",
+            parentId: parent.id,
+            kidId: kid.id,
+            location,
+            date: when.toISOString().slice(0, 10),
+            time: "16:00",
+            durationMins: isPrivate ? (coach?.privateMins ?? 60) : 45,
+            gbp: feeGbp,
+            kes: feeKes,
+            payStatus: "paid",
+            payMethod: payMethod === "mpesa" ? "mpesa" : "paypal",
+            notes: "Booked from public site",
+          });
+        }
+      }
+      setPaying(false);
+      setSubmitted(true);
+    }, 1800);
   }
 
   if (submitted) {
@@ -85,13 +131,19 @@ export default function BookTrial() {
           <div className="text-8xl mb-6 animate-float">🎉</div>
           <h1 className="font-display font-black text-5xl mb-4" style={{ color: "#ffffff" }}>You're Booked!</h1>
           <p className="text-base mb-3" style={{ color: "rgba(255,255,255,0.6)" }}>
-            We've received your trial booking for <strong style={{ color: "#FFD700" }}>{childName}</strong>.
+            We've received your {isPrivate ? "private session" : "trial"} booking for <strong style={{ color: "#FFD700" }}>{childName}</strong>
+            {coach ? <> with <strong style={{ color: "#FFD700" }}>{coach.name}</strong></> : null}.
           </p>
           <p className="text-sm mb-8" style={{ color: "rgba(255,255,255,0.5)" }}>
             A FunSkill coach will reach out within 24 hours to confirm your session details and send the payment receipt.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
-            <Link to="/" className="px-8 py-4 rounded-full font-semibold" style={{ background: "linear-gradient(135deg, #FFD700, #FFE84D)", color: "#000000" }}>
+            {user?.role === "parent" && (
+              <Link to="/portal/parent/bookings" className="px-8 py-4 rounded-full font-semibold" style={{ background: "linear-gradient(135deg, #FFD700, #FFE84D)", color: "#000000" }}>
+                Open family portal
+              </Link>
+            )}
+            <Link to="/" className="px-8 py-4 rounded-full font-semibold" style={user?.role === "parent" ? { border: "2px solid rgba(255,215,0,0.3)", color: "#FFD700" } : { background: "linear-gradient(135deg, #FFD700, #FFE84D)", color: "#000000" }}>
               Back to Home
             </Link>
             <Link to="/programs" className="px-8 py-4 rounded-full font-semibold" style={{ border: "2px solid rgba(255,215,0,0.3)", color: "#FFD700" }}>
@@ -105,6 +157,7 @@ export default function BookTrial() {
 
   return (
     <div className="pt-nav" style={{ backgroundColor: "#000000", minHeight: "100vh" }}>
+      <TrackPage page="book" />
       {/* Header */}
       <div className="relative overflow-hidden py-16 px-6" style={{ backgroundColor: "#000000" }}>
         <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse at center, rgba(255,215,0,0.08) 0%, transparent 70%)" }} />
@@ -115,18 +168,32 @@ export default function BookTrial() {
           </span>
         ))}
         <div className="relative text-center max-w-xl mx-auto">
-          <p className="text-xs uppercase tracking-widest font-bold mb-3" style={{ color: "#FFD700" }}>Free Trial Session</p>
+          <p className="text-xs uppercase tracking-widest font-bold mb-3" style={{ color: "#FFD700" }}>{isPrivate ? "Private 1:1 Session" : "Free Trial Session"}</p>
           <h1 className="font-display font-black mb-3" style={{ fontSize: "clamp(2.5rem,7vw,5rem)", color: "#ffffff" }}>
-            Book Your<br /><span style={{ color: "#FFD700" }}>Free Trial!</span>
+            {isPrivate ? <>Book a<br /><span style={{ color: "#FFD700" }}>Private Session</span></> : <>Book Your<br /><span style={{ color: "#FFD700" }}>Free Trial!</span></>}
           </h1>
           <p className="text-base" style={{ color: "rgba(255,255,255,0.55)" }}>
-            45 minutes of fun. All equipment provided. No experience needed. <br />All fields below are required.
+            {isPrivate && coach
+              ? `${coach.privateMins} minutes with ${coach.name}. ${formatPrivate(state.pricing[coach.slug]?.privateGbp ?? coach.privateGbp, state.pricing[coach.slug]?.privateKes ?? coach.privateKes)}.`
+              : "45 minutes of fun. All equipment provided. No experience needed."}
+            <br />All fields below are required.
           </p>
         </div>
       </div>
 
       <div className="px-6 pb-24">
         <form onSubmit={handleSubmit} noValidate className="max-w-2xl mx-auto space-y-8">
+
+          {coach && (
+            <div className="rounded-3xl p-5 flex flex-wrap items-center gap-4" style={{ backgroundColor: "#141414", border: "1px solid rgba(255,215,0,0.2)" }}>
+              <div>
+                <p className="text-xs uppercase tracking-widest mb-1" style={{ color: "#FFD700" }}>{isPrivate ? "Private with" : "Preferred coach"}</p>
+                <p className="font-display font-black text-2xl" style={{ color: "#ffffff" }}>{coach.name}</p>
+                <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>{coach.role} · {coach.specialty}</p>
+              </div>
+              <Link to={`/coaches/${coach.slug}`} className="ml-auto text-sm font-semibold" style={{ color: "#FFD700" }}>View profile →</Link>
+            </div>
+          )}
 
           {/* ── STEP 1: Choose Skill ── */}
           <div className="rounded-3xl p-7 space-y-5" style={{ backgroundColor: "#141414", border: "1px solid rgba(255,215,0,0.15)" }}>
@@ -201,8 +268,12 @@ export default function BookTrial() {
             <div className="rounded-2xl px-4 py-3 flex items-center gap-3" style={{ backgroundColor: "rgba(255,215,0,0.08)", border: "1px solid rgba(255,215,0,0.2)" }}>
               <span className="text-lg">🎁</span>
               <div>
-                <div className="font-semibold text-sm" style={{ color: "#FFD700" }}>Trial Session Fee: £10 / KES 1,500</div>
-                <div className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>One-time registration & equipment deposit — fully refundable if you don't continue.</div>
+                <div className="font-semibold text-sm" style={{ color: "#FFD700" }}>
+                  {isPrivate ? `Private session: £${feeGbp} / KES ${feeKes.toLocaleString()}` : "Trial Session Fee: £10 / KES 1,500"}
+                </div>
+                <div className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
+                  {isPrivate ? "Paid 1:1 coaching with your chosen FunSkill coach." : "One-time registration & equipment deposit — fully refundable if you don't continue."}
+                </div>
               </div>
             </div>
 
@@ -252,7 +323,7 @@ export default function BookTrial() {
                     style={{ backgroundColor: "rgba(0,175,79,0.08)", color: "#ffffff", border: "1px solid rgba(0,175,79,0.3)" }} />
                 </Field>
                 <div className="text-xs space-y-1" style={{ color: "rgba(255,255,255,0.5)" }}>
-                  <p>📱 After submitting, you will receive an <strong style={{ color: "#00af4f" }}>M-Pesa STK Push</strong> to authorise KES 1,500.</p>
+                  <p>📱 After submitting, you will receive an <strong style={{ color: "#00af4f" }}>M-Pesa STK Push</strong> to authorise KES {feeKes.toLocaleString()}.</p>
                   <p>📋 Paybill: <strong style={{ color: "#ffffff" }}>000000</strong> · Account: <strong style={{ color: "#ffffff" }}>FUNSKILL</strong></p>
                 </div>
               </div>
@@ -263,7 +334,7 @@ export default function BookTrial() {
               <div className="rounded-2xl p-5 space-y-2" style={{ backgroundColor: "rgba(0,112,186,0.07)", border: "1px solid rgba(0,112,186,0.2)" }}>
                 <p className="text-sm font-semibold" style={{ color: "#0070ba" }}>PayPal Payment Details</p>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.5)" }}>
-                  🌍 After submitting, you'll be redirected to PayPal to securely pay <strong style={{ color: "#ffffff" }}>£10</strong>. You can use any debit/credit card or your PayPal balance.
+                  🌍 After submitting, you'll be redirected to PayPal to securely pay <strong style={{ color: "#ffffff" }}>£{feeGbp}</strong>. You can use any debit/credit card or your PayPal balance.
                 </p>
                 <p className="text-xs" style={{ color: "rgba(255,255,255,0.4)" }}>PayPal.me: <strong style={{ color: "#ffffff" }}>paypal.me/funskillkids</strong></p>
               </div>
@@ -276,9 +347,9 @@ export default function BookTrial() {
             style={{ background: "linear-gradient(135deg, #FFD700, #FFE84D)", color: "#000000", boxShadow: "0 8px 40px rgba(255,215,0,0.35)" }}>
             {paying
               ? <span className="flex items-center justify-center gap-3"><span className="animate-spin">⏳</span> Processing Payment…</span>
-              : payMethod === "mpesa" ? "📱 Pay with M-Pesa & Book Trial →"
-              : payMethod === "paypal" ? "🌍 Pay with PayPal & Book Trial →"
-              : "🎉 Book My Free Trial →"
+              : payMethod === "mpesa" ? `📱 Pay with M-Pesa & Book ${isPrivate ? "Private" : "Trial"} →`
+              : payMethod === "paypal" ? `🌍 Pay with PayPal & Book ${isPrivate ? "Private" : "Trial"} →`
+              : isPrivate ? "🎉 Book Private Session →" : "🎉 Book My Free Trial →"
             }
           </button>
 
