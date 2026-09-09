@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { demoAccounts } from "./seed";
 import { usePortal } from "./store";
 import { fieldCls, fieldSt, GoldBtn } from "./ui";
 
@@ -39,15 +38,15 @@ export default function Login() {
         <div>
           <h1 className="font-display font-black text-5xl mb-4" style={{ color: "#fff" }}>Four doors.<br />One club.</h1>
           <p className="text-sm max-w-sm mb-8" style={{ color: "rgba(255,255,255,0.55)" }}>
-            You must type the email and the password. Nothing is filled for you. Then type the OTP.
+            Sign in with your FunSkill account. We will send a one-time code to verify it is you.
           </p>
           <ul className="space-y-2 text-sm" style={{ color: "rgba(255,255,255,0.7)" }}>
-            <li>· Meanwhile password for every demo door: <strong style={{ color: "#FFD700" }}>funskill</strong></li>
-            <li>· OTP is shown in the simulator — you must type it too</li>
-            <li>· Pending coaches cannot enter until admin accepts</li>
+            <li>· Parents manage kids, bookings, and payments</li>
+            <li>· Coaches see their sessions and earnings</li>
+            <li>· Schools and admin run programmes from here</li>
           </ul>
         </div>
-        <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Frontend simulation · email + password required</p>
+        <p className="text-xs" style={{ color: "rgba(255,255,255,0.3)" }}>Secure sign-in · email + password + OTP</p>
       </div>
 
       <div className="flex items-center justify-center p-6 sm:p-12">
@@ -56,21 +55,7 @@ export default function Login() {
             <Link to="/" className="font-display font-black text-2xl">Fun<span style={{ color: "#FFD700" }}>Skill</span></Link>
           </div>
           <h2 className="font-display font-black text-4xl" style={{ color: "#fff" }}>Sign in</h2>
-          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Type both fields. Send stays locked until email and password are filled.</p>
-
-          <div className="grid grid-cols-2 gap-2">
-            {demoAccounts.map((d) => (
-              <div
-                key={d.email}
-                className="text-left p-3 rounded-2xl"
-                style={{ backgroundColor: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}
-              >
-                <div className="text-[10px] uppercase tracking-widest" style={{ color: "#FFD700" }}>{d.role}</div>
-                <div className="text-xs mt-1 truncate" style={{ color: "rgba(255,255,255,0.7)" }}>{d.email}</div>
-              </div>
-            ))}
-          </div>
-          <p className="text-[11px]" style={{ color: "rgba(255,255,255,0.35)" }}>Reference only — copy these emails yourself. Password for all: funskill</p>
+          <p className="text-sm" style={{ color: "rgba(255,255,255,0.5)" }}>Enter your email and password to continue.</p>
 
           <div>
             <label className="text-xs font-semibold block mb-1" style={{ color: "rgba(255,255,255,0.6)" }}>Email <span style={{ color: "#FFD700" }}>*</span></label>
