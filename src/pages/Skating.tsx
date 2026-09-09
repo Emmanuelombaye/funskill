@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { skating, imgFast, imgHero } from "../data/images";
 
 /* ─── tiny reusable animated entrance hook ─── */
 function useFadeIn() {
@@ -52,7 +53,7 @@ const levels = [
     emoji: "🐣",
     color: "#FFD700",
     items: ["Helmet & pad fitting", "First steps on skates", "Standing balance", "Falling safely", "Rolling fun games"],
-    img: "https://images.unsplash.com/photo-1765728772425-e7dbd97c4e80?w=600&h=500&fit=crop&auto=format",
+    img: skating[1],
     desc: "Pure play and discovery. Children get comfortable on wheels in the most joyful, pressure-free way.",
   },
   {
@@ -61,7 +62,7 @@ const levels = [
     emoji: "⚡",
     color: "#FFE84D",
     items: ["Gliding & stopping", "Forward crossovers", "Backward skating", "Slalom cones", "Mini races"],
-    img: "https://images.unsplash.com/photo-1775482767815-3fb3a0fca405?w=600&h=500&fit=crop&auto=format",
+    img: skating[2],
     desc: "Core technique established. Speed, control, and the first taste of real competition.",
   },
   {
@@ -70,7 +71,7 @@ const levels = [
     emoji: "🚀",
     color: "#ffffff",
     items: ["Speed drills", "Jump introduction", "Ramp basics", "Team relay racing", "Regional showcases"],
-    img: "https://images.unsplash.com/photo-1784933360161-ee4a570c4964?w=600&h=500&fit=crop&auto=format",
+    img: skating[3],
     desc: "Serious progression. Advanced footwork, ramp technique, and regional-level competition.",
   },
   {
@@ -79,7 +80,7 @@ const levels = [
     emoji: "🏆",
     color: "#FFD700",
     items: ["Pro-level tricks", "Vert & street", "Race training", "Strength & conditioning", "National competition"],
-    img: "https://images.unsplash.com/photo-1775482615801-aee9f3743c23?w=600&h=500&fit=crop&auto=format",
+    img: skating[4],
     desc: "Elite coaching for those chasing medals, records, and their full athletic potential.",
   },
 ];
@@ -171,13 +172,13 @@ export default function Skating() {
           {/* Image mosaic */}
           <div className="relative grid grid-cols-2 gap-3 animate-float">
             <div className="rounded-3xl overflow-hidden row-span-2" style={{ minHeight: "380px" }}>
-              <img src="https://images.unsplash.com/photo-1651551574085-6f927390b7b0?w=500&h=700&fit=crop&auto=format" alt="Girl lacing roller skates" className="w-full h-full object-cover" />
+              <img src={skating[1]} alt="Kids roller skating" className="w-full h-full object-cover" {...imgHero} />
             </div>
             <div className="rounded-3xl overflow-hidden" style={{ height: "182px" }}>
-              <img src="https://images.unsplash.com/photo-1765728736092-9bc4d2aa4f39?w=400&h=280&fit=crop&auto=format" alt="Kids with roller skates" className="w-full h-full object-cover" />
+              <img src={skating[2]} alt="Kids with roller skates" className="w-full h-full object-cover" {...imgFast} />
             </div>
             <div className="rounded-3xl overflow-hidden" style={{ height: "182px" }}>
-              <img src="https://images.unsplash.com/photo-1784933360161-ee4a570c4964?w=400&h=280&fit=crop&auto=format" alt="Children rollerblading" className="w-full h-full object-cover" />
+              <img src={skating[3]} alt="Children rollerblading" className="w-full h-full object-cover" {...imgFast} />
             </div>
             {/* floating badge */}
             <div className="absolute -bottom-4 -left-4 px-5 py-3 rounded-2xl" style={{ backgroundColor: "#FFD700", color: "#000000", boxShadow: "0 12px 40px rgba(255,215,0,0.4)" }}>
@@ -235,14 +236,14 @@ export default function Skating() {
         </FadeIn>
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { url: "https://images.unsplash.com/photo-1775482498659-ad4db5f85ed5?w=400&h=400&fit=crop&auto=format", alt: "Kids running with helmets", h: "h-48 md:h-64" },
-            { url: "https://images.unsplash.com/photo-1765728772425-e7dbd97c4e80?w=400&h=600&fit=crop&auto=format", alt: "Girl in pink helmet sitting", h: "h-64 md:h-80" },
-            { url: "https://images.unsplash.com/photo-1775482679838-6547d1f795b2?w=400&h=400&fit=crop&auto=format", alt: "Children on paved area", h: "h-48 md:h-64" },
-            { url: "https://images.unsplash.com/photo-1775482615801-aee9f3743c23?w=400&h=600&fit=crop&auto=format", alt: "Children helmets sunny day", h: "h-64 md:h-80" },
+            { url: skating[4], alt: "Kids skating practice", h: "h-48 md:h-64" },
+            { url: skating[5], alt: "Skater in session", h: "h-64 md:h-80" },
+            { url: skating[6], alt: "Group skating outdoors", h: "h-48 md:h-64" },
+            { url: skating[7], alt: "Skating champions", h: "h-64 md:h-80" },
           ].map((img, i) => (
             <FadeIn key={img.alt} delay={i * 100}>
               <div className={`rounded-3xl overflow-hidden ${img.h} group`}>
-                <img src={img.url} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={img.url} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" {...imgFast} />
               </div>
             </FadeIn>
           ))}
@@ -290,6 +291,7 @@ export default function Skating() {
                 alt={levels[activeLevel].name}
                 className="absolute inset-0 w-full h-full object-cover"
                 style={{ transition: "opacity 0.5s ease" }}
+                {...imgFast}
               />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to right, transparent 60%, #141414 100%)" }} />
               {/* big emoji badge */}
@@ -373,7 +375,7 @@ export default function Skating() {
         <div className="max-w-7xl mx-auto grid md:grid-cols-3 gap-4">
           <FadeIn className="md:col-span-2 rounded-3xl overflow-hidden" style={{ minHeight: "360px" }}>
             <div className="relative h-full" style={{ minHeight: "360px" }}>
-              <img src="https://images.unsplash.com/photo-1775482767815-3fb3a0fca405?w=900&h=500&fit=crop&auto=format" alt="Two children rollerblading outdoors" className="absolute inset-0 w-full h-full object-cover" />
+              <img src={skating[5]} alt="Two children rollerblading outdoors" className="absolute inset-0 w-full h-full object-cover" {...imgFast} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.75) 0%, transparent 60%)" }} />
               <div className="absolute bottom-6 left-6">
                 <div className="text-xs font-bold uppercase tracking-widest mb-1" style={{ color: "#FFD700" }}>Together We Skate</div>
@@ -384,14 +386,14 @@ export default function Skating() {
           <div className="flex flex-col gap-4">
             <FadeIn className="rounded-3xl overflow-hidden flex-1" delay={100}>
               <div className="relative h-full" style={{ minHeight: "168px" }}>
-                <img src="https://images.unsplash.com/photo-1651551574085-6f927390b7b0?w=400&h=300&fit=crop&auto=format" alt="Girl lacing skates" className="absolute inset-0 w-full h-full object-cover" />
+                <img src={skating[6]} alt="Ready to skate" className="absolute inset-0 w-full h-full object-cover" {...imgFast} />
                 <div className="absolute inset-0 rounded-3xl" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 70%)" }} />
                 <div className="absolute bottom-4 left-4 font-display font-bold text-lg" style={{ color: "#FFD700" }}>Ready to roll 🛼</div>
               </div>
             </FadeIn>
             <FadeIn className="rounded-3xl overflow-hidden flex-1" delay={200}>
               <div className="relative h-full" style={{ minHeight: "168px" }}>
-                <img src="https://images.unsplash.com/photo-1784933360161-ee4a570c4964?w=400&h=300&fit=crop&auto=format" alt="Kids at playground rollerblading" className="absolute inset-0 w-full h-full object-cover" />
+                <img src={skating[7]} alt="Kids skating outdoors" className="absolute inset-0 w-full h-full object-cover" {...imgFast} />
                 <div className="absolute inset-0 rounded-3xl" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 70%)" }} />
                 <div className="absolute bottom-4 left-4 font-display font-bold text-lg" style={{ color: "#FFE84D" }}>Gear up. Go! ⚡</div>
               </div>

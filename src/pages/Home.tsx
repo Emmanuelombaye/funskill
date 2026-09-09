@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { TrackPage } from "../portal/track";
+import { chess, skating, yoga, imgFast, imgHero } from "../data/images";
 
 function useCountUp(target: number, duration = 2000, start = false) {
   const [count, setCount] = useState(0);
@@ -152,15 +153,15 @@ export default function Home() {
           {/* Hero visual */}
           <div className="relative hidden lg:block animate-float">
             <div className="relative grid grid-cols-2 gap-4">
-              <div className="col-span-2 rounded-2xl overflow-hidden h-64" style={{ border: "1px solid rgba(255,215,0,0.2)" }}>
-                <img src="https://images.unsplash.com/photo-1528819622765-d6bcf132f793?w=800&h=400&fit=crop&auto=format" alt="Children playing chess" className="w-full h-full object-cover" style={{ filter: "saturate(1.1)" }} />
+              <div className="col-span-2 rounded-2xl overflow-hidden h-64 relative" style={{ border: "1px solid rgba(255,215,0,0.2)" }}>
+                <img src={chess[1]} alt="Children playing chess" className="w-full h-full object-cover" style={{ filter: "saturate(1.1)" }} {...imgHero} />
                 <div className="absolute inset-0 rounded-2xl" style={{ background: "linear-gradient(to top, rgba(8,12,26,0.6) 0%, transparent 50%)" }} />
               </div>
               <div className="rounded-2xl overflow-hidden h-48" style={{ border: "1px solid rgba(255,255,255,0.2)" }}>
-                <img src="https://images.unsplash.com/photo-1564989209397-e0aebffb4ce5?w=400&h=400&fit=crop&auto=format" alt="Roller skating" className="w-full h-full object-cover" style={{ filter: "saturate(1.2)" }} />
+                <img src={skating[1]} alt="Roller skating" className="w-full h-full object-cover" style={{ filter: "saturate(1.2)" }} {...imgFast} />
               </div>
               <div className="rounded-2xl overflow-hidden h-48" style={{ border: "1px solid rgba(255,208,0,0.2)" }}>
-                <img src="https://images.unsplash.com/photo-1529655683826-aba9b3e77383?w=400&h=400&fit=crop&auto=format" alt="Young athlete" className="w-full h-full object-cover" style={{ filter: "saturate(1.2)" }} />
+                <img src={yoga[1]} alt="Kids yoga" className="w-full h-full object-cover" style={{ filter: "saturate(1.2)" }} {...imgFast} />
               </div>
             </div>
             {/* floating badge */}
@@ -188,7 +189,7 @@ export default function Home() {
           <div className="grid md:grid-cols-2 gap-6">
             {/* Chess */}
             <Link to="/chess" className="group relative rounded-3xl overflow-hidden block" style={{ minHeight: "420px" }}>
-              <img src="https://images.unsplash.com/photo-1528819622765-d6bcf132f793?w=800&h=600&fit=crop&auto=format" alt="Chess" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src={chess[2]} alt="Chess" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" {...imgFast} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
               <div className="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-bold uppercase" style={{ backgroundColor: "#FFD700", color: "#000000" }}>♟ Chess</div>
               <div className="absolute inset-0 p-8 flex flex-col justify-end">
@@ -205,7 +206,7 @@ export default function Home() {
 
             {/* Skating */}
             <Link to="/skating" className="group relative rounded-3xl overflow-hidden block" style={{ minHeight: "420px" }}>
-              <img src="https://images.unsplash.com/photo-1775482767815-3fb3a0fca405?w=800&h=600&fit=crop&auto=format" alt="Roller Skating" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src={skating[2]} alt="Roller Skating" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" {...imgFast} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
               <div className="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-bold uppercase" style={{ backgroundColor: "#FFD700", color: "#000000" }}>⛸ Skating</div>
               <div className="absolute inset-0 p-8 flex flex-col justify-end">
@@ -222,7 +223,7 @@ export default function Home() {
 
             {/* Ballet */}
             <Link to="/ballet" className="group relative rounded-3xl overflow-hidden block" style={{ minHeight: "420px" }}>
-              <img src="https://images.unsplash.com/photo-1685339009948-d807094b1457?w=800&h=600&fit=crop&auto=format" alt="Ballet" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+              <img src={yoga[1]} alt="Yoga" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" {...imgFast} />
               <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.3) 60%, transparent 100%)" }} />
               <div className="absolute top-6 right-6 px-3 py-1 rounded-full text-xs font-bold uppercase" style={{ backgroundColor: "#FFD700", color: "#000000" }}>🩰 Ballet</div>
               <div className="absolute inset-0 p-8 flex flex-col justify-end">

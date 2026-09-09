@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
+import { yoga, imgFast, imgHero } from "../data/images";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -21,28 +22,28 @@ const levels = [
     tag: "Ages 3–5", name: "Little Swans", emoji: "🩰",
     color: "#FFD700",
     items: ["Introduction to music & rhythm", "Basic positions (1st, 2nd)", "Creative movement", "Mini performances"],
-    img: "https://images.unsplash.com/photo-1685339009948-d807094b1457?w=600&h=500&fit=crop&auto=format",
+    img: yoga[1],
     desc: "Tiny dancers discover grace, rhythm, and the joy of movement in a playful, nurturing environment.",
   },
   {
     tag: "Ages 6–9", name: "Rising Dancers", emoji: "🌟",
     color: "#FFE84D",
     items: ["Classical technique foundations", "Barre exercises", "Centre work", "Simple choreography", "End-of-term shows"],
-    img: "https://images.unsplash.com/photo-1677603142181-6e49eb1a3c10?w=600&h=500&fit=crop&auto=format",
+    img: yoga[1],
     desc: "Building real technique with proper posture, musicality, and growing confidence on stage.",
   },
   {
     tag: "Ages 10–14", name: "Junior Ballerinas", emoji: "💫",
     color: "#ffffff",
     items: ["Advanced barre & centre", "Pointe preparation", "Character dance", "RAD exam preparation", "Festival competitions"],
-    img: "https://images.unsplash.com/photo-1621004612697-2b177e183326?w=600&h=500&fit=crop&auto=format",
+    img: yoga[1],
     desc: "Serious classical training — technique, artistry, and competition readiness.",
   },
   {
     tag: "Ages 15+", name: "Senior Company", emoji: "🏅",
     color: "#FFD700",
     items: ["Professional technique", "Pointe work", "Contemporary fusion", "Full productions", "Audition coaching"],
-    img: "https://images.unsplash.com/photo-1595348514401-eca68a3bea33?w=600&h=500&fit=crop&auto=format",
+    img: yoga[1],
     desc: "Elite ballet training for those pursuing performance, competition, or professional pathways.",
   },
 ];
@@ -124,13 +125,13 @@ export default function Ballet() {
           {/* Image mosaic */}
           <div className="relative grid grid-cols-2 gap-3 animate-float">
             <div className="rounded-3xl overflow-hidden row-span-2" style={{ minHeight: "380px" }}>
-              <img src="https://images.unsplash.com/photo-1685339009948-d807094b1457?w=500&h=700&fit=crop&auto=format" alt="Ballerinas in dance studio" className="w-full h-full object-cover" />
+              <img src={yoga[1]} alt="Kids yoga and movement" className="w-full h-full object-cover" {...imgHero} />
             </div>
             <div className="rounded-3xl overflow-hidden" style={{ height: "182px" }}>
-              <img src="https://images.unsplash.com/photo-1677603142181-6e49eb1a3c10?w=400&h=280&fit=crop&auto=format" alt="Ballet shoes" className="w-full h-full object-cover" />
+              <img src={yoga[1]} alt="Yoga practice" className="w-full h-full object-cover object-top" {...imgFast} />
             </div>
             <div className="rounded-3xl overflow-hidden" style={{ height: "182px" }}>
-              <img src="https://images.unsplash.com/photo-1621004612697-2b177e183326?w=400&h=280&fit=crop&auto=format" alt="Ballet dancer" className="w-full h-full object-cover" />
+              <img src={yoga[1]} alt="Kids stretching" className="w-full h-full object-cover object-bottom" {...imgFast} />
             </div>
             <div className="absolute -bottom-4 -left-4 px-5 py-3 rounded-2xl" style={{ backgroundColor: "#FFD700", color: "#000000", boxShadow: "0 12px 40px rgba(255,215,0,0.4)" }}>
               <div className="font-display font-black text-2xl leading-none">🩰</div>
@@ -170,14 +171,14 @@ export default function Ballet() {
         </FadeIn>
         <div className="max-w-7xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-3">
           {[
-            { url: "https://images.unsplash.com/photo-1685339009948-d807094b1457?w=400&h=500&fit=crop&auto=format", alt: "Ballerinas in studio", h: "h-64 md:h-80" },
-            { url: "https://images.unsplash.com/photo-1677603142181-6e49eb1a3c10?w=400&h=300&fit=crop&auto=format", alt: "Ballet shoes", h: "h-48 md:h-64" },
-            { url: "https://images.unsplash.com/photo-1621004612697-2b177e183326?w=400&h=500&fit=crop&auto=format", alt: "Ballet dancer", h: "h-64 md:h-80" },
-            { url: "https://images.unsplash.com/photo-1595348514401-eca68a3bea33?w=400&h=300&fit=crop&auto=format", alt: "Dance performance", h: "h-48 md:h-64" },
+            { url: yoga[1], alt: "Kids yoga session", h: "h-64 md:h-80", pos: "object-center" },
+            { url: yoga[1], alt: "Yoga balance", h: "h-48 md:h-64", pos: "object-top" },
+            { url: yoga[1], alt: "Movement class", h: "h-64 md:h-80", pos: "object-bottom" },
+            { url: yoga[1], alt: "Stretch and focus", h: "h-48 md:h-64", pos: "object-left" },
           ].map((img, i) => (
             <FadeIn key={img.alt} delay={i * 100}>
               <div className={`rounded-3xl overflow-hidden ${img.h} group`}>
-                <img src={img.url} alt={img.alt} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
+                <img src={img.url} alt={img.alt} className={`w-full h-full object-cover ${img.pos} transition-transform duration-700 group-hover:scale-110`} {...imgFast} />
               </div>
             </FadeIn>
           ))}

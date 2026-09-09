@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { chess, skating, imgFast } from "../data/images";
 
 const benefits = [
   { icon: "📋", title: "Curriculum-Aligned", desc: "Sessions designed to complement PSHE, PE, and enrichment goals." },
@@ -28,10 +29,10 @@ export default function Schools() {
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="rounded-2xl overflow-hidden h-48">
-              <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?w=400&h=300&fit=crop&auto=format" alt="School Chess" className="w-full h-full object-cover" />
+              <img src={chess[4]} alt="School Chess" className="w-full h-full object-cover" {...imgFast} />
             </div>
             <div className="rounded-2xl overflow-hidden h-48 mt-6">
-              <img src="https://images.unsplash.com/photo-1577412647305-991150c7d163?w=400&h=300&fit=crop&auto=format" alt="School Skating" className="w-full h-full object-cover" />
+              <img src={skating[3]} alt="School Skating" className="w-full h-full object-cover" {...imgFast} />
             </div>
           </div>
         </div>

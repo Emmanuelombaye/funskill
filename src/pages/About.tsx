@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { skating, imgFast } from "../data/images";
 
 const milestones = [
   { year: "2018", event: "FunSkill founded with 3 coaches and 40 students in London." },
@@ -36,7 +37,7 @@ export default function About() {
             </Link>
           </div>
           <div className="rounded-2xl overflow-hidden" style={{ height: "400px" }}>
-            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=700&h=500&fit=crop&auto=format" alt="FunSkill team" className="w-full h-full object-cover" />
+            <img src={skating[2]} alt="FunSkill in action" className="w-full h-full object-cover" {...imgFast} />
           </div>
         </div>
       </section>
