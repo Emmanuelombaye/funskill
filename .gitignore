@@ -2,7 +2,6 @@ node_modules/
 dist/
 build/
 .cache/
-.env*
 .vite/
 vite.config.*.timestamp-*
 *.tsbuildinfo
@@ -11,3 +10,4 @@ logs/
 *.log
 .claude-replay.*
 .tmp-*
+config.bat

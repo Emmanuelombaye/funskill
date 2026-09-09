@@ -22,13 +22,6 @@ const U = {
   school: "u-school",
 };
 
-export const demoAccounts = [
-  { role: "Admin", email: "admin@funskill.com", hint: "Sees everything: views, bookings, pricing, applications" },
-  { role: "Coach", email: "james.chen@funskill.com", hint: "Head coach — sessions, students, earnings" },
-  { role: "Parent", email: "sarah.k@email.com", hint: "Sarah K — kids Alex & Noah, bookings & payments" },
-  { role: "School", email: "head@stmarys.ac.uk", hint: "St Mary's Primary — programmes & invoices" },
-];
-
 export const seedUsers: User[] = [
   { id: U.admin, role: "admin", name: "Amara Okello", email: "admin@funskill.com", phone: "+44 7700 900001", password: DEMO_PASSWORD, status: "active", avatar: "AO", joined: "2018-03-01" },
   { id: U.james, role: "coach", name: "James Chen", email: "james.chen@funskill.com", phone: "+44 7700 900010", password: DEMO_PASSWORD, status: "active", avatar: "JC", coachSlug: "james-chen", joined: "2018-03-01" },
